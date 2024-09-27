@@ -1,4 +1,4 @@
-# Sandbox Example to Attach a [kind](https://kind.sigs.k8s.io/) Cluster using Terraform
+# Sandbox Example to Attach a [kind](https://kind.sigs.k8s.io/) Cluster and install Service Mesh using Terraform
 
 ## Prerequisites
 The sample is meant just to provide a local example for experimentation. It assumes an environment where [`kind`](https://kind.sigs.k8s.io/) is available and could otherwise be run on the command line, e.g. `kind create cluster`.
@@ -59,9 +59,12 @@ The other examples and module limit dependancies to terraform core providers, bu
 |------|-------------|------|---------|:--------:|
 | gcp\_location | GCP location to create the attached resource in | `string` | `"us-west1"` | no |
 | gcp\_project\_id | The GCP project id where the cluster will be registered | `string` | n/a | yes |
-| kind\_node\_image | The image used for the kind cluster | `string` | `"kindest/node:v1.28.0"` | no |
+| kind\_api\_server\_address | Kind cluster API server address | `string` | `null` | no |
+| kind\_api\_server\_port | Kind cluster API server port | `number` | `null` | no |
+| kind\_node\_image | The image used for the kind cluster | `string` | `"kindest/node:v1.30.4"` | no |
+| kubeconfig\_path | The kubeconfig path. | `string` | `null` | no |
 | name\_prefix | Common prefix to use for generating names | `string` | n/a | yes |
-| platform\_version | Platform version of the attached cluster resource | `string` | `"1.28.0-gke.3"` | no |
+| platform\_version | Platform version of the attached cluster resource | `string` | `"1.30.0-gke.1"` | no |
 
 ## Outputs
 

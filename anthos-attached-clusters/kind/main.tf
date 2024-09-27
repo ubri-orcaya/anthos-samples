@@ -26,7 +26,7 @@ resource "kind_cluster" "cluster" {
   name       = local.cluster_name
   node_image = var.kind_node_image
 
-  kubeconfig_path = "${path.root}/.tmp/kube/${local.cluster_name}"
+  kubeconfig_path = var.kubeconfig_path != null ? var.kubeconfig_path : "${path.root}/.tmp/kube/${local.cluster_name}"
 
   wait_for_ready = true
 
@@ -35,6 +35,10 @@ resource "kind_cluster" "cluster" {
     api_version = "kind.x-k8s.io/v1alpha4"
     feature_gates = {
       KubeletInUserNamespace : "true"
+    }
+    networking {
+      api_server_address = var.kind_api_server_address
+      api_server_port    = var.kind_api_server_port
     }
   }
 }
@@ -67,8 +71,6 @@ data "google_project" "project" {
   project_id = var.gcp_project_id
 }
 
-
-
 module "oidc" {
   source = "./oidc"
 
@@ -77,7 +79,6 @@ module "oidc" {
   client_certificate     = kind_cluster.cluster.client_certificate
   client_key             = kind_cluster.cluster.client_key
 }
-
 
 resource "google_container_attached_cluster" "primary" {
   name             = local.cluster_name
@@ -119,6 +120,20 @@ resource "google_container_attached_cluster" "primary" {
   ]
 }
 
+# Install Cloud Service Mesh
+module "install-mesh" {
+  source = "../modules/attached-install-mesh"
 
+  kubeconfig = kind_cluster.cluster.kubeconfig_path
+  context    = local.cluster_context
+  fleet_id   = data.google_project.project.project_id
 
+  asmcli_enable_cluster_roles      = true
+  asmcli_enable_cluster_labels     = true
+  asmcli_enable_gcp_components     = true
+  asmcli_enable_namespace_creation = true
 
+  depends_on = [
+    google_container_attached_cluster.primary
+  ]
+}
