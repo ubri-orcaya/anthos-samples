@@ -1,0 +1,21 @@
+export CLUSTER_NAME=aws-ch-cluster-uu
+export PROJECT_ID=dna-eval-01
+export GCP_LOCATION=europe-west3
+export AWS_REGION=eu-central-1
+export VPC_ID=vpc-065059fa8967dbfc8
+export SUBNET_IDS=subnet-0be8650f1c6951d0d,subnet-0678aa458e197bb06,subnet-0ea4870c761c61c25
+export CLUSTER_VERSION=1.29.6-gke.600
+export CONFIG_ENCRYPTION_KMS_KEY_ARN=arn:aws:kms:eu-central-1:989661945487:key/56ae53dd-f512-4988-96a3-46f8cbbb3514
+export DATABASE_ENCRYPTION_KMS_KEY_ARN=arn:aws:kms:eu-central-1:989661945487:key/56ae53dd-f512-4988-96a3-46f8cbbb3514
+export CP_IAM_ROLE_ARN=arn:aws:iam::989661945487:role/aws-ch-cluster-uu-anthos-api-role
+export CP_IAM_INSTANCE_PROFILE=aws-ch-cluster-uu-anthos-cp-instance-profile
+export SERVICE_ADDRESS_CIDR_BLOCKS=10.1.0.0/16
+export NODE_POOL_IAM_INSTANCE_PROFILE=aws-ch-cluster-uu-anthos-np-instance-profile
+export NODE_POOL_INSTANCE_TYPE=t3.medium
+export NODE_POOL_CONFIG_ENCRYPTION_KEY=arn:aws:kms:eu-central-1:989661945487:key/2b687983-cf2a-4b45-ab7a-577caf951d4e
+export NODE_POOL_ROOT_ENCRYPTION_KEY=arn:aws:kms:eu-central-1:989661945487:key/7c0779dd-5c63-4e67-8c69-fd2cf9328a59
+#export NODE_POOL_SUBNET=
+#pod_address_cidr_blocks="10.2.0.0/16"
+#service_address_cidr_blocks="10.1.0.0/16"
+#SSH_KEY_PAIR_NAME=
+

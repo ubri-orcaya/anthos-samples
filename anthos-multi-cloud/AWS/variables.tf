@@ -103,6 +103,14 @@ variable "node_pool_instance_type" {
   type        = string
 }
 
+variable "node_pool_spot_instance_types" {
+  description = "AWS Spot Nodes instance types"
+  type        = list(string)
+  default = [
+    "t3.medium", "t3a.medium", "m7a.medium"
+  ]
+}
+
 variable "control_plane_instance_type" {
   description = "AWS Node instance type"
   type        = string
