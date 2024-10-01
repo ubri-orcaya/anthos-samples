@@ -22,6 +22,7 @@ output "project_number" {
 }
 
 data "google_container_aws_versions" "this" {
+  provider = google-beta
   location = var.gcp_location
   project  = var.gcp_project
 }

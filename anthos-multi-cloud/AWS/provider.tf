@@ -26,7 +26,14 @@ terraform {
 
 provider "aws" {
   region = var.aws_region
+  shared_credentials_files = [pathexpand("~/.aws/credentials")]
+  assume_role {
+    role_arn = "arn:aws:iam::989661945487:role/OrganizationAccountAccessRole"
+  }
 }
 provider "google" {
+  project = var.gcp_project_id
+}
+provider "google-beta" {
   project = var.gcp_project_id
 }

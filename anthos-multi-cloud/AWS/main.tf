@@ -17,6 +17,7 @@
 
 locals {
   name_prefix = "${var.name_prefix}-${random_string.suffix.result}"
+  nodepoolspot_instance_types_string = join(",", var.node_pool_spot_instance_types)
 }
 resource "random_string" "suffix" {
   length    = 2
@@ -56,7 +57,7 @@ module "gcp_data" {
   gcp_location = var.gcp_location
   gcp_project  = var.gcp_project_id
 }
-
+/*
 module "anthos_cluster" {
   source                                           = "./modules/anthos_cluster"
   anthos_prefix                                    = local.name_prefix
@@ -80,15 +81,41 @@ module "anthos_cluster" {
   depends_on                                       = [module.kms, module.iam, module.vpc]
   control_plane_instance_type                      = var.control_plane_instance_type
   node_pool_instance_type                          = var.node_pool_instance_type
-
 }
+*/
+
+module "anthos_cluster_spot" {
+  source                                           = "./modules/anthos_cluster_spot"
+  anthos_prefix                                    = local.name_prefix
+  location                                         = var.gcp_location
+  aws_region                                       = var.aws_region
+  cluster_version                                  = coalesce(var.cluster_version, module.gcp_data.latest_version)
+  database_encryption_kms_key_arn                  = module.kms.database_encryption_kms_key_arn
+  control_plane_config_encryption_kms_key_arn      = module.kms.control_plane_config_encryption_kms_key_arn
+  control_plane_root_volume_encryption_kms_key_arn = module.kms.control_plane_root_volume_encryption_kms_key_arn
+  control_plane_main_volume_encryption_kms_key_arn = module.kms.control_plane_main_volume_encryption_kms_key_arn
+  node_pool_config_encryption_kms_key_arn          = module.kms.node_pool_config_encryption_kms_key_arn
+  node_pool_root_volume_encryption_kms_key_arn     = module.kms.node_pool_root_volume_encryption_kms_key_arn
+  control_plane_iam_instance_profile               = module.iam.cp_instance_profile_id
+  node_pool_iam_instance_profile                   = module.iam.np_instance_profile_id
+  admin_users                                      = var.admin_users
+  vpc_id                                           = module.vpc.aws_vpc_id
+  role_arn                                         = module.iam.api_role_arn
+  subnet_ids                                       = [module.vpc.aws_cp_subnet_id_1, module.vpc.aws_cp_subnet_id_2, module.vpc.aws_cp_subnet_id_3]
+  node_pool_subnet_id                              = module.vpc.aws_cp_subnet_id_1
+  fleet_project                                    = "projects/${module.gcp_data.project_number}"
+  depends_on                                       = [module.kms, module.iam, module.vpc]
+  control_plane_instance_type                      = var.control_plane_instance_type
+  node_pool_spot_instance_types                    = var.node_pool_spot_instance_types
+}
+
 module "create_vars" {
   source                = "terraform-google-modules/gcloud/google"
   version               = "~> 3.4"
   platform              = "linux"
   create_cmd_entrypoint = "./modules/scripts/create_vars.sh"
-  create_cmd_body       = "\"${local.name_prefix}\" \"${var.gcp_location}\" \"${var.aws_region}\" \"${var.cluster_version}\" \"${module.kms.database_encryption_kms_key_arn}\" \"${module.iam.cp_instance_profile_id}\" \"${module.iam.api_role_arn}\" \"${module.vpc.aws_cp_subnet_id_1},${module.vpc.aws_cp_subnet_id_2},${module.vpc.aws_cp_subnet_id_3}\" \"${module.vpc.aws_vpc_id}\" \"${var.gcp_project_id}\" \"${var.pod_address_cidr_blocks}\" \"${var.service_address_cidr_blocks}\" \"${module.iam.np_instance_profile_id}\" \"${var.node_pool_instance_type}\" \"${module.kms.node_pool_config_encryption_kms_key_arn}\" \"${module.kms.node_pool_root_volume_encryption_kms_key_arn}\""
-  module_depends_on     = [module.anthos_cluster]
+  create_cmd_body       = "\"${local.name_prefix}\" \"${var.gcp_location}\" \"${var.aws_region}\" \"${var.cluster_version}\" \"${module.kms.database_encryption_kms_key_arn}\" \"${module.iam.cp_instance_profile_id}\" \"${module.iam.api_role_arn}\" \"${module.vpc.aws_cp_subnet_id_1},${module.vpc.aws_cp_subnet_id_2},${module.vpc.aws_cp_subnet_id_3}\" \"${module.vpc.aws_vpc_id}\" \"${var.gcp_project_id}\" \"${var.pod_address_cidr_blocks}\" \"${var.service_address_cidr_blocks}\" \"${module.iam.np_instance_profile_id}\" \"${local.nodepoolspot_instance_types_string}\" \"${module.kms.node_pool_config_encryption_kms_key_arn}\" \"${module.kms.node_pool_root_volume_encryption_kms_key_arn}\""
+  module_depends_on     = [module.anthos_cluster_spot]
 }
 
 

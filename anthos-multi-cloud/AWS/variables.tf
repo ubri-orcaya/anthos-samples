@@ -98,10 +98,10 @@ variable "service_address_cidr_blocks" {
   default     = "10.1.0.0/16"
 }
 
-variable "node_pool_instance_type" {
-  description = "AWS Node instance type"
-  type        = string
-}
+# variable "node_pool_instance_type" {
+#   description = "AWS Node instance type"
+#   type        = string
+# }
 
 variable "node_pool_spot_instance_types" {
   description = "AWS Spot Nodes instance types"

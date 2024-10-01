@@ -28,6 +28,7 @@ output "project_number" {
 }
 
 resource "google_container_aws_cluster" "this" {
+  provider = google-beta
   aws_region  = var.aws_region
   description = "Test AWS cluster created with Terraform"
   location    = var.location
@@ -86,6 +87,7 @@ resource "google_container_aws_cluster" "this" {
   }
 }
 resource "google_container_aws_node_pool" "this" {
+  provider  = google-beta
   name      = "${var.anthos_prefix}-nodepool"
   cluster   = google_container_aws_cluster.this.id
   subnet_id = var.node_pool_subnet_id
@@ -102,7 +104,9 @@ resource "google_container_aws_node_pool" "this" {
     config_encryption {
       kms_key_arn = var.node_pool_config_encryption_kms_key_arn
     }
-    instance_type        = var.node_pool_instance_type
+    spot_config {
+      instance_types = var.node_pool_spot_instance_types
+    }
     iam_instance_profile = var.node_pool_iam_instance_profile
     root_volume {
       size_gib    = 30

@@ -59,5 +59,5 @@ variable "anthos_prefix" {
 }
 variable "control_plane_instance_type" {
 }
-variable "node_pool_instance_type" {
+variable "node_pool_spot_instance_types" {
 }

@@ -5,7 +5,7 @@ name_prefix = "aws-ch-cluster"
 /* supported instance types
 https://cloud.google.com/anthos/clusters/docs/multi-cloud/aws/reference/supported-instance-types
 */
-node_pool_instance_type     = "t3.medium"
+# node_pool_instance_type     = "t3.medium"
 node_pool_spot_instance_types = ["t3.medium", "t3a.medium"]
 control_plane_instance_type = "t3.medium"
 
